@@ -21,14 +21,40 @@ including LSF clusters.
   - STAR_GENOMES - directory with a subdirectory for each STAR-indexed
     genome; defaults to $STAR_BASE/genomes
 
+### Files:
+
+The program expects a tab-delimited input file with a header line.  The file
+format is described in detail in the manual page, but in its simplest form,
+it looks like this:
+
+```
+sample      in_bam
+SampleName1 /path/to/s1/readgroup1.bam
+SampleName1 /path/to/s1/readgroup2.bam
+SampleName2 /path/to/s2/readgroup1.bam
+```
+
 ### Running script:
 
-Writes several batch scripts, as well as temporary files if not otherwise
-specified, to the current working directory.
+Writes several batch scripts, as well as temporary files to the current
+working directory, if no location is specified.  So I typically create a
+run-specific temporary directory to work in, and send the final aligned
+output to a separate, higher level directory:
 
-  run_star.pl -genome hg19 -picard /path/to/jars samples.txt
+```
+$ mkdir tmp_TODAY && cd tmp_TODAY
+$ run_star.pl -genome hg19 -out ../aligned/ -picard /path/to/jars samples.txt
+```
 
-To create batch scripts, but not submit them, use the --dryrun option.
+*Note the trailing slash on the output directory; this is required.*
+
+To create batch scripts, but not submit them, add the --dryrun option.
+This will lose the dependencies between the scripts, but in general you
+can always first run all of the star.*.sh scripts, then run all of the
+merge.*.sh scripts.  The star scripts require a dedicated machine with lots
+of RAM and at least 12 CPUs (set with --max_cpus); the merge scripts
+typically require only 4-6 Gb RAM, and even this can be further reduced.
+
 To see all of the options, use run_star.pl --man.
 
 
