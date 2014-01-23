@@ -1,5 +1,5 @@
 #!/usr/bin/perl -w
-# $Id: run_star.pl 6612 2013-11-23 14:14:33Z pchines $
+# $Id: run_star.pl 6640 2014-01-23 17:19:42Z pchines $
 
 use strict;
 use warnings;
@@ -222,7 +222,7 @@ sub create_star_script {
         my $sparam = $rh->{star_params} || $Opt{star_params} || $EMPTY;
         print $fh "$Opt{star} --genomeDir $Gdir --genomeLoad LoadAndKeep "
             . "$sparam --outStd SAM -outReadsUnmapped Fastx "
-            . qq{ | awk '{print} /^\@HD/{print "$rh->{sam_header}"}' } #'for vim
+            . qq{ | awk '/^\@/{print} !x{x=1;print "$rh->{sam_header}"} !/^\@/{print $0 "\tRG:z:$rh->{rgid}"}' } #'for vim
             . " | samtools view -uS - "
             . " | samtools sort -m $mem_per_sort - aligned &\n";
         if ($first) {
@@ -626,7 +626,7 @@ sub process_commandline {
                 manual help+ version)) || pod2usage(0);
     if ($Opt{manual})  { pod2usage(verbose => 2); }
     if ($Opt{help})    { pod2usage(verbose => $Opt{help}-1); }
-    if ($Opt{version}) { die "run_star.pl, ", q$Revision: 6612 $, "\n"; }
+    if ($Opt{version}) { die "run_star.pl, ", q$Revision: 6640 $, "\n"; }
     if (!$Opt{iknow}) {
         warn "This script is under development; things may change.  Use at your own risk.\n";
     }
