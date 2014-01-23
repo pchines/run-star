@@ -1,5 +1,5 @@
 #!/usr/bin/perl -w
-# $Id: run_star.pl 6641 2014-01-23 17:51:16Z pchines $
+# $Id: run_star.pl 6642 2014-01-23 18:02:40Z pchines $
 
 use strict;
 use warnings;
@@ -222,7 +222,7 @@ sub create_star_script {
         my $sparam = $rh->{star_params} || $Opt{star_params} || $EMPTY;
         print $fh "$Opt{star} --genomeDir $Gdir --genomeLoad LoadAndKeep "
             . "$sparam --outStd SAM -outReadsUnmapped Fastx "
-            . qq{ | awk -v x=0 '/^\@/{print} x==0{x=1;print "$rh->{sam_header}"} /^[^\@]/{print \$0 "\tRG:z:$rh->{rgid}"}' } #'for vim
+            . qq{ | awk -v x=0 '/^\@/{print} x==0{x=1;print "$rh->{sam_header}"} /^[^\@]/{print \$0 "\tRG:Z:$rh->{rgid}"}' } #'for vim
             . " | samtools view -uS - "
             . " | samtools sort -m $mem_per_sort - aligned &\n";
         if ($first) {
@@ -626,7 +626,7 @@ sub process_commandline {
                 manual help+ version)) || pod2usage(0);
     if ($Opt{manual})  { pod2usage(verbose => 2); }
     if ($Opt{help})    { pod2usage(verbose => $Opt{help}-1); }
-    if ($Opt{version}) { die "run_star.pl, ", q$Revision: 6641 $, "\n"; }
+    if ($Opt{version}) { die "run_star.pl, ", q$Revision: 6642 $, "\n"; }
     if (!$Opt{iknow}) {
         warn "This script is under development; things may change.  Use at your own risk.\n";
     }
